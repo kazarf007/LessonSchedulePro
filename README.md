@@ -1,4 +1,4 @@
-# LessonSchedualPro
+# LessonSchedulePro
 
 1.支持缩放查看
 
@@ -46,7 +46,13 @@
 
 `<attr name="textPaddingSize" format="dimension"/>`    
      
-
+usage:
+      val table = findViewById<LessonScheduleProView>(R.id.table)
+      
+      table.setLessonData(listOf(InnerLesson(1,1,"art-room331-wasabee"),InnerLesson(2,2,"math-room123-J.Koan")))
+           .setSerialBreakLessonData(listOf(InnerBreakLesson(1 , "running" , true , 1)))
+           .build()
+        
 
 
 https://user-images.githubusercontent.com/23413753/222059039-17ab924a-b330-4172-aaeb-651d065609a0.mp4
