@@ -47,6 +47,7 @@ interface BorderDrawer : TableDrawer {
         endY: Float,
         width: Float,
         cellHeight: Float,
+        textPaddingSize : Float,
         axisY: Map<Int, Float>,
         scale: Float,
         scrollX: Int,

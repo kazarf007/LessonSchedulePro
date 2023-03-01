@@ -4,6 +4,8 @@ import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Paint
 import android.text.TextPaint
+import com.jaygee.lessonschedual.util.drawMultiLineText
+import com.jaygee.lessonschedual.util.generateMultiLineString
 
 /**
  *  create on 24/2/2023
@@ -94,7 +96,12 @@ class DefaultBorderDrawer(
         }
     }
 
-    private val indexWordMap = mutableMapOf<String,List<String>>()
+    private val mp = mapOf(Pair(1,"第1节09:00-09:45"),Pair(2,"第2节10:00-10:45"),Pair(3,"第3节10:15-11:00"),
+        Pair(4,"第4节11:15-12:00"),Pair(5,"第5节14:00-14:45"),Pair(6,"第6节15:00-15:45"),
+        Pair(7,"第7节16:15-17:00"),Pair(8,"第8节17:15-18:00"))
+
+    //缓存换行的文本
+    private val indexWordMap = mutableMapOf<Int,List<String>>()
 
     override fun drawIndex(
         canvas: Canvas?,
@@ -102,6 +109,7 @@ class DefaultBorderDrawer(
         endY: Float,
         width: Float,
         cellHeight: Float,
+        textPaddingSize : Float,
         axisY: Map<Int, Float>,
         scale: Float,
         scrollX: Int,
@@ -132,10 +140,16 @@ class DefaultBorderDrawer(
             mPaint
         )
         for (entry in axisY) {
-            canvas?.drawText(
-                "第${entry.key}节",
-                scrollXRatio + marginX / 2,
-                entry.value + cellHeight / 2 + drawTextOffsetY, mPaint
+            if (!indexWordMap.containsKey(entry.key)){
+                indexWordMap[entry.key] = mp[entry.key]!!.generateMultiLineString(mPaint , marginX - 20f)
+            }
+            mPaint.drawMultiLineText(
+                canvas, indexWordMap[entry.key]!!,
+                scrollXRatio,
+                entry.value,
+                marginX,
+                cellHeight,
+                drawTextOffsetY, textMeasureHeight
             )
         }
     }

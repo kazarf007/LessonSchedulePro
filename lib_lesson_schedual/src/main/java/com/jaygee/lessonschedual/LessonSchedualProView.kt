@@ -24,7 +24,7 @@ class LessonSchedualProView : View, View.OnTouchListener {
     //星期坐标记录 key -> 星期?  value -> y起点坐标
     private val weekStartAxisY = mutableMapOf<Int, Float>()
 
-    private val texts = mutableMapOf<Pair<Int, Int>, String>()
+    private val texts = mutableMapOf<Pair<Int, Int>, List<String>>()
 
     //课程
     private val lessons = mutableListOf<Lesson>()
@@ -154,7 +154,7 @@ class LessonSchedualProView : View, View.OnTouchListener {
         //组合成数据格式是：
         // <第1节，课前> = [0,<晨跑，晨操>],[1,<<语文<周一>，英语<周二>...>>]
         // <第1节，课后> = [0,<周课间,星期课间>]
-        for (entry in data.filter { it.weekNo() in 1..weekNo && it.lessonIndex() in 1..lessonMaxNo  }.groupBy(keySelector = { bl -> bl.lessonIndex() })) {
+        for (entry in data.filter { (if (it.weekNo() == NOT_MATTER_WEEK) true else it.weekNo() in 1..weekNo ) && it.lessonIndex() in 1..lessonMaxNo  }.groupBy(keySelector = { bl -> bl.lessonIndex() })) {
             entry.value.groupBy { bl -> bl.isBeforeLesson() }.forEach { entry2 ->
                 serialBreakLessons[Pair(entry.key, entry2.key)] = entry2.value.groupBy { it.sort() }
             }
@@ -264,7 +264,7 @@ class LessonSchedualProView : View, View.OnTouchListener {
         //通过比较获取最大长度的课程名字
         lessons.calculateWidth(paint = drawer.paint(),
             transformWord = { it.label() }, other = {
-                texts[Pair(it.weekNo(), it.lessonIndex())] = it.label()
+                texts[Pair(it.weekNo(), it.lessonIndex())] = it.label().generateMultiLineString(drawer.paint(), textMaxDrawWidth)
             }, result = { tmpMaxWidth ->
                 //获取文字的真实显示行数
                 val line = tmpMaxWidth / textMaxDrawWidth
@@ -439,7 +439,7 @@ class LessonSchedualProView : View, View.OnTouchListener {
             drawer.draw(
                 canvas,
                 cell.value,
-                (texts[cell.key] ?: "").generateMultiLineString(drawer.paint(), textMaxDrawWidth)
+                (texts[cell.key] ?: mutableListOf())
             )
         }
         borderDrawer.drawWeek(
@@ -459,6 +459,7 @@ class LessonSchedualProView : View, View.OnTouchListener {
             exactlyHeight.toFloat(),
             exactlyWidth.toFloat(),
             cellHeight.toFloat(),
+            textPaddingSize,
             lessonStartAxisY,
             mScaleFactor,
             scrollX,

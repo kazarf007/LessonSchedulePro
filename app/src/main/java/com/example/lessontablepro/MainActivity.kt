@@ -23,7 +23,7 @@ class MainActivity : AppCompatActivity() {
             InnerLesson(3,7,"你的"),
             InnerLesson(2,8,"asdasdas"),
         )).setSerialBreakLessonData(listOf(
-            InnerBreakLesson(1 , "晨跑" , true , 0),
+            InnerBreakLesson(1 , "晨跑" , true , 1),
             Inner2BreakLesson(1,1 , "语文早读" , true , 2),
             Inner2BreakLesson(2,1 , "英语早读" , true, 2),
             Inner2BreakLesson(3,1 , "政治早读" , true, 2),

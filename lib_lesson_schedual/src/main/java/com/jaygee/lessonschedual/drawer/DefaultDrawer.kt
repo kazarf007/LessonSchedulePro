@@ -35,7 +35,6 @@ class DefaultDrawer(textSize: Float, var textColor: Int, var bgColor: Int) : Les
     override val textMeasureHeight: Float
         get() = mPaint.fontMetrics.descent - mPaint.fontMetrics.ascent
 
-    private val sb = java.lang.StringBuilder()
 
     override fun draw(canvas: Canvas?, cell: LessonCell, label : List<String?>) {
         mPaint.color = if (label.isEmpty() || label.none { !it.isNullOrEmpty() }) {

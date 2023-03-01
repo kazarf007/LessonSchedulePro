@@ -33,9 +33,6 @@ class SerialBreakDrawer(val textSize: Float, val minHeight: Float) : BreakDrawer
     override val textMeasureHeight: Float
         get() = mPaint.fontMetrics.descent - mPaint.fontMetrics.ascent
 
-    private val sb = java.lang.StringBuilder()
-
-
     override fun drawBreak(
         canvas: Canvas?,
         cells : Map<Pair<Int, Boolean>, Map<Int , List<BreakLessonCell>>>
