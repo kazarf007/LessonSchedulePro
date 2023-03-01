@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="LessonScheduleProView">
+        <attr name="cellWidth" format="dimension"/>
+        <attr name="weekNo" format="integer"/>
+        <attr name="lessonMaxNo" format="integer"/>
+        <attr name="dividerSize" format="dimension"/>
+        <attr name="textPaddingSize" format="dimension"/>
+    </declare-styleable>
+</resources>
