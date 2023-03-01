@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="tv_size">16sp</dimen>
+    <dimen name="border_width">30dp</dimen>
+    <dimen name="dp16">30dp</dimen>
+    <dimen name="dp18">30dp</dimen>
+    <dimen name="dp20">20dp</dimen>
+    <dimen name="dp30">30dp</dimen>
+    <dimen name="dp50">50dp</dimen>
+    <dimen name="dp60">60dp</dimen>
+</resources>
