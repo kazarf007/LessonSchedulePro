@@ -6,7 +6,7 @@ import android.graphics.RectF
 /**
  *  create on 13/2/2023
  **/
-class LessonCell(var rectF: RectF) {
+open class LessonCell(var rectF: RectF) {
 
     lateinit var path: Path
 
@@ -25,7 +25,7 @@ class LessonCell(var rectF: RectF) {
     val label = mutableListOf<String>()
 }
 
-class BreakLessonCell(var rectF: RectF) {
+open class BreakLessonCell(var rectF: RectF) {
 
     val label = mutableListOf<String>()
 

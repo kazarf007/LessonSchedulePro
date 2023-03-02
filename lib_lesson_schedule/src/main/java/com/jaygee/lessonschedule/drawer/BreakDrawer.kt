@@ -16,10 +16,6 @@ interface BreakDrawer : TableDrawer {
         cells: Map<Pair<Int, Boolean>, Map<Int, List<BreakLessonCell>>>
     )
 
-    fun breakHeight(): Float
-
-    fun configMaxLine(num: Int)
-
     /**
      * 最小高度
      */

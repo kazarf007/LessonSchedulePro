@@ -6,6 +6,7 @@ import android.graphics.Color
 import android.graphics.Paint
 import android.graphics.RectF
 import android.util.AttributeSet
+import android.util.Log
 import android.view.MotionEvent
 import android.view.ScaleGestureDetector
 import android.view.View
@@ -53,15 +54,15 @@ class LessonScheduleProView : View, View.OnTouchListener {
 
 
     //星期 start form 1
-    var weekNo = 5
+    private var weekNo = 5
 
     //最大节数  start form 1
-    var lessonMaxNo = 8
+    private var lessonMaxNo = 8
 
     //格子之间的间隔
-    var dividerSize = 0f
+    private var dividerSize = 0f
 
-    var textPaddingSize = 0f
+    private var textPaddingSize = 0f
 
 
     //课表边框绘制
@@ -116,7 +117,12 @@ class LessonScheduleProView : View, View.OnTouchListener {
     private val mScaleDetector = ScaleGestureDetector(context, scaleListener)
 
 
-    constructor(context: Context) : super(context)
+    constructor(context: Context) : super(context) {
+        cellWidth = 100f
+        weekNo = 5
+        lessonMaxNo = 8
+        setOnTouchListener(this)
+    }
 
     constructor(context: Context, attr: AttributeSet) : super(context, attr) {
         context.obtainStyledAttributes(attr, R.styleable.LessonScheduleProView).apply {
@@ -127,6 +133,12 @@ class LessonScheduleProView : View, View.OnTouchListener {
             textPaddingSize = getDimension(R.styleable.LessonScheduleProView_textPaddingSize, 0f)
         }.recycle()
         setOnTouchListener(this)
+    }
+
+    fun configScheduleSize(xCount : Int , yCount : Int) : LessonScheduleProView {
+        weekNo = xCount
+        lessonMaxNo = yCount
+        return this
     }
 
     fun configDrawer(borderDrawer : BorderDrawer? , lessonDrawer : LessonDrawer? , breakLessonDrawer : BreakDrawer?) : LessonScheduleProView {
@@ -173,11 +185,7 @@ class LessonScheduleProView : View, View.OnTouchListener {
             )
         }
         if (!::drawer.isInitialized){
-            drawer = DefaultDrawer(
-                context.resources.getDimension(R.dimen.tv_size),
-                Color.CYAN,
-                Color.parseColor("#B9B4D4")
-            )
+            drawer = DefaultLessonDrawer()
         }
         if (!::breakDrawer.isInitialized){
             breakDrawer = SerialBreakDrawer(
@@ -374,9 +382,11 @@ class LessonScheduleProView : View, View.OnTouchListener {
         var ttop = calculateTop(key)
         val li = mutableListOf<BreakLessonCell>()
         val sbl = serialBreakLessons[key]!!
-        var fl = 0f
+        var indexHeight = 0f
         sbl.keys.forEachIndexed { index, sortKey ->
-            fl = blHeight[key]!![index]
+            indexHeight = blHeight[key]!![index]
+            Log.e("vaaaaaz","key -> $key , indexHeight -> $indexHeight")
+
             if (sbl[sortKey]!!.any { it.weekNo() != NOT_MATTER_WEEK }) {
                 sbl[sortKey]!!.forEach { bkl ->
                     li.add(
@@ -385,7 +395,7 @@ class LessonScheduleProView : View, View.OnTouchListener {
                                 borderDrawer.xBorderSize() + borderDrawer.lineSize() + dividerSize + (cellWidth + dividerSize) * (bkl.weekNo() - 1),
                                 ttop,
                                 borderDrawer.xBorderSize() + borderDrawer.lineSize() + dividerSize + (cellWidth + dividerSize) * (bkl.weekNo() - 1) + cellWidth,
-                                ttop + fl
+                                ttop + indexHeight
                             )
                         ).apply {
                             this.label.let {
@@ -405,7 +415,7 @@ class LessonScheduleProView : View, View.OnTouchListener {
                     BreakLessonCell(
                         RectF(
                             borderDrawer.xBorderSize()+ borderDrawer.lineSize() + dividerSize, ttop,
-                            exactlyWidth - dividerSize, ttop + fl
+                            exactlyWidth - dividerSize, ttop + indexHeight
                         )
                     ).apply {
                         this.label.let {
@@ -420,7 +430,7 @@ class LessonScheduleProView : View, View.OnTouchListener {
                     }
                 )
             }
-            ttop += (fl + dividerSize)
+            ttop += (indexHeight + dividerSize)
             map[sortKey] = li
         }
         breakCell[key] = map
@@ -432,6 +442,7 @@ class LessonScheduleProView : View, View.OnTouchListener {
             mScaleFactor,
             mScaleFactor
         )
+
         canvas?.drawColor(Color.WHITE)
 
         breakDrawer.drawBreak(canvas, breakCell)
@@ -471,6 +482,7 @@ class LessonScheduleProView : View, View.OnTouchListener {
             scrollX,
             scrollY
         )
+
     }
 
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {

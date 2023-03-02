@@ -1,8 +1,10 @@
 package com.jaygee.lessonschedule.util
 
 import android.graphics.Canvas
+import android.graphics.Color
 import android.graphics.Paint
 import android.graphics.RectF
+import android.util.Log
 
 /**
  *  create on 27/2/2023
@@ -36,7 +38,7 @@ fun Paint.drawMultiLineText(
                 canvas?.drawText(
                     s ?: "",
                     startX + maxWidth / 2,
-                    (startY + maxHeight / 2 - drawTextOffsetY + index * textMeasureHeight),
+                    startY + _drawStartY + drawTextOffsetY * 2 + index * textMeasureHeight,
                     this
                 )
             }
@@ -53,12 +55,22 @@ fun Paint.drawMultiLineText(
     drawTextOffsetY: Float,
     textMeasureHeight: Float
 ) {
-    drawMultiLineText(canvas , word , rectF.left , rectF.top , rectWidth , rectHeight , drawTextOffsetY, textMeasureHeight)
+    drawMultiLineText(
+        canvas,
+        word,
+        rectF.left,
+        rectF.top,
+        rectWidth,
+        rectHeight,
+        drawTextOffsetY,
+        textMeasureHeight
+    )
 }
 
 private val _sb = StringBuilder()
 fun String.generateMultiLineString(paint: Paint, maxWidth: Float): List<String> {
     _sb.setLength(0)
+    _drawLines = 0
     return if (paint.measureText(this) > maxWidth) {
         this.forEach {
             _sb.append(it)

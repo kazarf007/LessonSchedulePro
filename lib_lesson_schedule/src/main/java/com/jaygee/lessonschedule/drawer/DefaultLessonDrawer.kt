@@ -4,6 +4,7 @@ import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Paint
 import android.text.TextPaint
+import com.jaygee.lessonschedual.R
 import com.jaygee.lessonschedule.model.LessonCell
 import com.jaygee.lessonschedule.util.drawMultiLineText
 
@@ -11,16 +12,22 @@ import com.jaygee.lessonschedule.util.drawMultiLineText
 /**
  *  create on 13/2/2023
  **/
-class DefaultDrawer(textSize: Float, var textColor: Int, var bgColor: Int) : LessonDrawer {
+open class DefaultLessonDrawer() : LessonDrawer {
 
-    val emptyColor: Int by lazy {
-        Color.parseColor("#F0F2F7")
-    }
+    open var textColor: Int = Color.parseColor("#000000")
+
+    val bgColor: Int
+        get() = Color.parseColor("#F0F2F7")
+
+    val emptyColor: Int
+        get() = Color.parseColor("#F0F2F7")
+
+    var tvSize : Float = 54f
 
     val mPaint: TextPaint by lazy {
         TextPaint().apply {
             style = Paint.Style.FILL_AND_STROKE
-            this.textSize = textSize
+            this.textSize = tvSize
             this.isDither = true
             this.isAntiAlias = true
             this.textAlign = Paint.Align.CENTER
