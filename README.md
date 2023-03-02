@@ -50,13 +50,11 @@
 usage:
 
       添加依赖
-      
       implementation 'io.github.kazarf007:lessonschedual:1.0.0'
       
       xml
-      
       <com.jaygee.lessonschedule.LessonScheduleProView
-        android:id="@+id/lesson"
+        android:id="@+id/table"
         app:dividerSize="10dp"
         app:textPaddingSize="10dp"
         app:weekNo="7"
@@ -72,6 +70,7 @@ usage:
       activity
       
       val table = findViewById<LessonScheduleProView>(R.id.table)
+      
       table.setLessonData(listOf(InnerLesson(1,1,"art-room331-wasabee"),InnerLesson(2,2,"math-room123-J.Koan")))
            .setSerialBreakLessonData(listOf(InnerBreakLesson(1 , "running" , true , 1)))
            .build()
