@@ -1,5 +1,6 @@
 # LessonSchedulePro
 
+
 1.支持缩放查看
 
 2.支持横纵双向同时拖动查看
@@ -26,29 +27,51 @@
     
 属性：
 
-// 格子的宽度
+      // 格子的宽度
 
-`<attr name="cellWidth" format="dimension"/>`   
+      <attr name="cellWidth" format="dimension"/> 
 
-//星期数 
+      //星期数 
 
-`<attr name="weekNo" format="integer"/>`  
+      <attr name="weekNo" format="integer"/>  
 
-//每日课程最大数 
+      //每日课程最大数 
 
-`<attr name="lessonMaxNo" format="integer"/>`   
+      <attr name="lessonMaxNo" format="integer"/>   
 
-//cell之间的间距 
+      //cell之间的间距 
 
-`<attr name="dividerSize" format="dimension"/>` 
+      <attr name="dividerSize" format="dimension"/> 
 
-//cell中文字的左右间距 
+      //cell中文字的左右间距 
 
-`<attr name="textPaddingSize" format="dimension"/>`    
+      <attr name="textPaddingSize" format="dimension"/>   
      
 usage:
-      val table = findViewById<LessonScheduleProView>(R.id.table)
+
+      添加依赖
       
+      implementation 'io.github.kazarf007:lessonschedual:1.0.0'
+      
+      xml
+      
+      <com.jaygee.lessonschedule.LessonScheduleProView
+        android:id="@+id/lesson"
+        app:dividerSize="10dp"
+        app:textPaddingSize="10dp"
+        app:weekNo="7"
+        app:lessonMaxNo="8"
+        app:cellWidth="100dp"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+      activity
+      
+      val table = findViewById<LessonScheduleProView>(R.id.table)
       table.setLessonData(listOf(InnerLesson(1,1,"art-room331-wasabee"),InnerLesson(2,2,"math-room123-J.Koan")))
            .setSerialBreakLessonData(listOf(InnerBreakLesson(1 , "running" , true , 1)))
            .build()
