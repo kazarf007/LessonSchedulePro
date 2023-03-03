@@ -51,7 +51,9 @@ usage:
 
       添加依赖
       implementation 'io.github.kazarf007:lessonschedual:1.0.1'
-      
+
+demo:
+
       xml
       <com.jaygee.lessonschedule.LessonScheduleProView
         android:id="@+id/table"
