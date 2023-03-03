@@ -4,6 +4,7 @@ import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Paint
 import android.text.TextPaint
+import com.jaygee.lessonschedule.drawer.base.BorderDrawer
 import com.jaygee.lessonschedule.util.drawMultiLineText
 import com.jaygee.lessonschedule.util.generateMultiLineString
 
@@ -141,7 +142,7 @@ class DefaultBorderDrawer(
         )
         for (entry in axisY) {
             if (!indexWordMap.containsKey(entry.key)){
-                indexWordMap[entry.key] = mp[entry.key]!!.generateMultiLineString(mPaint , marginX - 20f)
+                indexWordMap[entry.key] = mp[entry.key]!!.generateMultiLineString(mPaint , marginX - 10f)
             }
             mPaint.drawMultiLineText(
                 canvas, indexWordMap[entry.key]!!,

@@ -27,6 +27,10 @@ open class LessonCell(var rectF: RectF) {
 
 open class BreakLessonCell(var rectF: RectF) {
 
+    var week = 1
+    var lessonIndex = 1
+    var sort = 0
+
     val label = mutableListOf<String>()
 
     lateinit var path: Path

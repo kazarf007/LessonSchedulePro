@@ -4,7 +4,7 @@ import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Paint
 import android.text.TextPaint
-import com.jaygee.lessonschedual.R
+import com.jaygee.lessonschedule.drawer.base.LessonDrawer
 import com.jaygee.lessonschedule.model.LessonCell
 import com.jaygee.lessonschedule.util.drawMultiLineText
 
@@ -22,7 +22,7 @@ open class DefaultLessonDrawer() : LessonDrawer {
     val emptyColor: Int
         get() = Color.parseColor("#F0F2F7")
 
-    var tvSize : Float = 54f
+    var tvSize : Float = 36f
 
     val mPaint: TextPaint by lazy {
         TextPaint().apply {

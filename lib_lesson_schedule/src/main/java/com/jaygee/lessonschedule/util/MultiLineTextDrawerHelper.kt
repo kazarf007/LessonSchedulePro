@@ -11,7 +11,6 @@ import android.util.Log
  **/
 
 private var _drawLength = 0f
-private var _drawLines = 0
 private var _drawStartY = 0f
 
 fun Paint.drawMultiLineText(
@@ -70,15 +69,19 @@ fun Paint.drawMultiLineText(
 private val _sb = StringBuilder()
 fun String.generateMultiLineString(paint: Paint, maxWidth: Float): List<String> {
     _sb.setLength(0)
-    _drawLines = 0
+    _drawLength = 0f
     return if (paint.measureText(this) > maxWidth) {
         this.forEach {
-            _sb.append(it)
-            _drawLength += paint.measureText(it.toString())
-            if (_drawLength > maxWidth) {
+            if (_drawLength + paint.measureText(it.toString()) >= maxWidth) {
                 _sb.append("\n")
+                _sb.append(it)
                 _drawLength = 0f
-                _drawLines += 1
+            }else{
+                _sb.append(it)
+            }
+            _drawLength += paint.measureText(it.toString())
+            if (!this.contains("节")){
+                Log.e("var","char -> $it _drawLength -> $_drawLength maxWidth -> $maxWidth")
             }
         }
         _sb.toString().split("\n").filter { it.isNotEmpty() }

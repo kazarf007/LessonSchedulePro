@@ -2,10 +2,9 @@ package com.jaygee.lessonschedule.drawer
 
 import android.graphics.*
 import android.text.TextPaint
-import android.util.Log
+import com.jaygee.lessonschedule.drawer.base.BreakDrawer
 import com.jaygee.lessonschedule.model.BreakLessonCell
 import com.jaygee.lessonschedule.util.drawMultiLineText
-import kotlin.math.max
 
 /**
  *  create on 24/2/2023
@@ -15,7 +14,7 @@ class SerialBreakDrawer(val textSize: Float, val minHeight: Float) : BreakDrawer
     private val mPaint: TextPaint by lazy {
         TextPaint().apply {
             style = Paint.Style.FILL_AND_STROKE
-            this.textSize = 100f
+            this.textSize = 36f
             this.isDither = true
             this.isAntiAlias = true
             this.strokeWidth = 1f
@@ -23,7 +22,7 @@ class SerialBreakDrawer(val textSize: Float, val minHeight: Float) : BreakDrawer
         }
     }
 
-    override fun minHeight() = minHeight + textMeasureHeight
+    override fun minHeight() = minHeight + textMeasureHeight * 2
 
     override fun paint() = mPaint
 

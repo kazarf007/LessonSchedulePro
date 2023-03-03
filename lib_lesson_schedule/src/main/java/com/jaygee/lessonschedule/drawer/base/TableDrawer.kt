@@ -1,4 +1,4 @@
-package com.jaygee.lessonschedule.drawer
+package com.jaygee.lessonschedule.drawer.base
 
 import android.graphics.Paint
 

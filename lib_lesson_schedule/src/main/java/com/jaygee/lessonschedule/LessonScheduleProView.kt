@@ -13,8 +13,12 @@ import android.view.View
 import android.widget.Toast
 import com.jaygee.lessonschedual.R
 import com.jaygee.lessonschedule.drawer.*
+import com.jaygee.lessonschedule.drawer.base.BorderDrawer
+import com.jaygee.lessonschedule.drawer.base.BreakDrawer
+import com.jaygee.lessonschedule.drawer.base.LessonDrawer
 import com.jaygee.lessonschedule.model.*
 import com.jaygee.lessonschedule.util.ClickJudger
+import com.jaygee.lessonschedule.util.ScheduleClickListener
 import com.jaygee.lessonschedule.util.generateMultiLineString
 import com.jaygee.lessonschedule.util.sumOfFloat
 
@@ -116,6 +120,7 @@ class LessonScheduleProView : View, View.OnTouchListener {
 
     private val mScaleDetector = ScaleGestureDetector(context, scaleListener)
 
+    private var clickListener: ScheduleClickListener? = null
 
     constructor(context: Context) : super(context) {
         cellWidth = 100f
@@ -130,33 +135,44 @@ class LessonScheduleProView : View, View.OnTouchListener {
             weekNo = getInteger(R.styleable.LessonScheduleProView_weekNo, 5)
             lessonMaxNo = getInteger(R.styleable.LessonScheduleProView_lessonMaxNo, 8)
             dividerSize = getDimension(R.styleable.LessonScheduleProView_dividerSize, 0f)
-            textPaddingSize = getDimension(R.styleable.LessonScheduleProView_textPaddingSize, 0f)
+            textPaddingSize = getDimension(R.styleable.LessonScheduleProView_textPaddingSize, 10f)
+            Log.e("var","textMaxDrawWidth -> ${textMaxDrawWidth} , ps -> $textPaddingSize")
         }.recycle()
         setOnTouchListener(this)
     }
 
-    fun configScheduleSize(xCount : Int , yCount : Int) : LessonScheduleProView {
+    fun addClickListener(l: ScheduleClickListener?): LessonScheduleProView {
+        clickListener = l
+        return this
+    }
+
+
+    fun configScheduleSize(xCount: Int, yCount: Int): LessonScheduleProView {
         weekNo = xCount
         lessonMaxNo = yCount
         return this
     }
 
-    fun configDrawer(borderDrawer : BorderDrawer? , lessonDrawer : LessonDrawer? , breakLessonDrawer : BreakDrawer?) : LessonScheduleProView {
-        if (borderDrawer != null){
-            this.borderDrawer =  borderDrawer
+    fun configDrawer(
+        borderDrawer: BorderDrawer?,
+        lessonDrawer: LessonDrawer?,
+        breakLessonDrawer: BreakDrawer?
+    ): LessonScheduleProView {
+        if (borderDrawer != null) {
+            this.borderDrawer = borderDrawer
         }
-        if (lessonDrawer != null){
-            this.drawer =  lessonDrawer
+        if (lessonDrawer != null) {
+            this.drawer = lessonDrawer
         }
-        if (breakLessonDrawer != null){
-            this.breakDrawer =  breakLessonDrawer
+        if (breakLessonDrawer != null) {
+            this.breakDrawer = breakLessonDrawer
         }
         return this
     }
 
     fun setLessonData(data: List<Lesson>): LessonScheduleProView {
         lessons.clear()
-        lessons.addAll(data.filter { it.weekNo() in 1..weekNo && it.lessonIndex() in 1..lessonMaxNo  })
+        lessons.addAll(data.filter { it.weekNo() in 1..weekNo && it.lessonIndex() in 1..lessonMaxNo })
         return this
     }
 
@@ -167,16 +183,19 @@ class LessonScheduleProView : View, View.OnTouchListener {
         //组合成数据格式是：
         // <第1节，课前> = [0,<晨跑，晨操>],[1,<<语文<周一>，英语<周二>...>>]
         // <第1节，课后> = [0,<周课间,星期课间>]
-        for (entry in data.filter { (if (it.weekNo() == NOT_MATTER_WEEK) true else it.weekNo() in 1..weekNo ) && it.lessonIndex() in 1..lessonMaxNo  }.groupBy(keySelector = { bl -> bl.lessonIndex() })) {
+        for (entry in data.filter { (if (it.weekNo() == NOT_MATTER_WEEK) true else it.weekNo() in 1..weekNo) && it.lessonIndex() in 1..lessonMaxNo }
+            .groupBy(keySelector = { bl -> bl.lessonIndex() })) {
             entry.value.groupBy { bl -> bl.isBeforeLesson() }.forEach { entry2 ->
-                serialBreakLessons[Pair(entry.key, entry2.key)] = entry2.value.groupBy { it.sort() }
+
+                serialBreakLessons[Pair(entry.key, entry2.key)] =
+                    entry2.value.sortedBy { it.sort() }.groupBy { it.sort() }
             }
         }
         return this
     }
 
     fun build() {
-        if (!::borderDrawer.isInitialized){
+        if (!::borderDrawer.isInitialized) {
             borderDrawer = DefaultBorderDrawer(
                 tvSize = context.resources.getDimension(R.dimen.tv_size),
                 color = Color.GRAY,
@@ -184,10 +203,10 @@ class LessonScheduleProView : View, View.OnTouchListener {
                 marginY = context.resources.getDimension(R.dimen.dp30)
             )
         }
-        if (!::drawer.isInitialized){
+        if (!::drawer.isInitialized) {
             drawer = DefaultLessonDrawer()
         }
-        if (!::breakDrawer.isInitialized){
+        if (!::breakDrawer.isInitialized) {
             breakDrawer = SerialBreakDrawer(
                 textSize = context.resources.getDimension(R.dimen.tv_size),
                 minHeight = context.resources.getDimension(R.dimen.dp30)
@@ -273,7 +292,8 @@ class LessonScheduleProView : View, View.OnTouchListener {
         //通过比较获取最大长度的课程名字
         lessons.calculateWidth(paint = drawer.paint(),
             transformWord = { it.label() }, other = {
-                texts[Pair(it.weekNo(), it.lessonIndex())] = it.label().generateMultiLineString(drawer.paint(), textMaxDrawWidth)
+                texts[Pair(it.weekNo(), it.lessonIndex())] =
+                    it.label().generateMultiLineString(drawer.paint(), textMaxDrawWidth)
             }, result = { tmpMaxWidth ->
                 //获取文字的真实显示行数
                 val line = tmpMaxWidth / textMaxDrawWidth
@@ -385,55 +405,63 @@ class LessonScheduleProView : View, View.OnTouchListener {
         var indexHeight = 0f
         sbl.keys.forEachIndexed { index, sortKey ->
             indexHeight = blHeight[key]!![index]
-            Log.e("vaaaaaz","key -> $key , indexHeight -> $indexHeight")
 
             if (sbl[sortKey]!!.any { it.weekNo() != NOT_MATTER_WEEK }) {
                 sbl[sortKey]!!.forEach { bkl ->
                     li.add(
-                        BreakLessonCell(
-                            RectF(
+                        generateBreakLessonCell(
+                            weekNo = bkl.weekNo(), lessonIndexNo = key.first, sort = sortKey,
+                            label = bkl.label(),
+                            rectF = RectF(
                                 borderDrawer.xBorderSize() + borderDrawer.lineSize() + dividerSize + (cellWidth + dividerSize) * (bkl.weekNo() - 1),
                                 ttop,
                                 borderDrawer.xBorderSize() + borderDrawer.lineSize() + dividerSize + (cellWidth + dividerSize) * (bkl.weekNo() - 1) + cellWidth,
                                 ttop + indexHeight
                             )
-                        ).apply {
-                            this.label.let {
-                               it.clear()
-                               it.addAll(
-                                    bkl.label().generateMultiLineString(
-                                        breakDrawer.paint(),
-                                        (this@apply).cellWidth - textPaddingSize * 2
-                                    )
-                                )
-                            }
-                        }
+                        )
                     )
                 }
             } else {
                 li.add(
-                    BreakLessonCell(
-                        RectF(
-                            borderDrawer.xBorderSize()+ borderDrawer.lineSize() + dividerSize, ttop,
-                            exactlyWidth - dividerSize, ttop + indexHeight
+                    generateBreakLessonCell(
+                        weekNo = NOT_MATTER_WEEK, lessonIndexNo = key.first, sort = sortKey,
+                        label = sbl[sortKey]?.first()?.label() ?: "",
+                        rectF = RectF(
+                            borderDrawer.xBorderSize() + borderDrawer.lineSize() + dividerSize,
+                            ttop,
+                            exactlyWidth - dividerSize,
+                            ttop + indexHeight
                         )
-                    ).apply {
-                        this.label.let {
-                            it.clear()
-                            it.addAll(
-                                (sbl[sortKey]?.first()?.label() ?: "").generateMultiLineString(
-                                    breakDrawer.paint(),
-                                    (this@apply).cellWidth - textPaddingSize * 2
-                                )
-                            )
-                        }
-                    }
+                    )
                 )
             }
             ttop += (indexHeight + dividerSize)
             map[sortKey] = li
         }
         breakCell[key] = map
+    }
+
+    private fun generateBreakLessonCell(
+        weekNo: Int,
+        lessonIndexNo: Int,
+        sort: Int,
+        label: String,
+        rectF: RectF
+    ): BreakLessonCell {
+        return BreakLessonCell(rectF).apply {
+            this.week = weekNo
+            this.lessonIndex = lessonIndexNo
+            this.sort = sort
+            this.label.let {
+                it.clear()
+                it.addAll(
+                    label.generateMultiLineString(
+                        breakDrawer.paint(),
+                        cellWidth - textPaddingSize * 2
+                    )
+                )
+            }
+        }
     }
 
     override fun draw(canvas: Canvas?) {
@@ -530,36 +558,30 @@ class LessonScheduleProView : View, View.OnTouchListener {
                                 (oldY + scrollY) / mScaleFactor
                             )
                         ) {
-                            Toast.makeText(
-                                context,
-                                "星期${cell.key.first} 第${cell.key.second}节",
-                                Toast.LENGTH_SHORT
-                            ).show()
+                            clickListener?.clickLesson(cell.key.first, cell.key.second)
                             findClickPos = true
                             break
                         }
                     }
-                    if (!findClickPos){
-                        all@ for (cell in breakCell.values) {
-                            for (value in cell.values) {
-                                for (breakLessonCell in value) {
+                    if (!findClickPos) {
+                        all@ for (mutableEntry in breakCell) {
+                            for (entry in mutableEntry.value) {
+                                for (breakLessonCell in entry.value) {
                                     if (ClickJudger.isClickPath(
                                             breakLessonCell.path,
                                             (oldX + scrollX) / mScaleFactor,
                                             (oldY + scrollY) / mScaleFactor
                                         )
                                     ) {
-                                        Toast.makeText(
-                                            context,
-                                            breakLessonCell.label.joinToString { it },
-                                            Toast.LENGTH_SHORT
-                                        ).show()
+                                        clickListener?.clickBreakLesson(
+                                            breakLessonCell.week, breakLessonCell.lessonIndex,
+                                            mutableEntry.key.second, breakLessonCell.sort
+                                        )
                                         findClickPos = true
                                         break@all
                                     }
                                 }
                             }
-
                         }
                     }
                 }
@@ -590,7 +612,7 @@ class LessonScheduleProView : View, View.OnTouchListener {
 
     private var findClickPos = false
 
-    private fun actionMove(){
+    private fun actionMove() {
         when {
             //横纵都全部在里面
             maxScrollWidth < 0 && maxScrollHeight < 0 -> {
