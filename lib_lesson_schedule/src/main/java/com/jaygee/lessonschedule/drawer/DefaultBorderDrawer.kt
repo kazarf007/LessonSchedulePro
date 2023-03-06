@@ -11,14 +11,14 @@ import com.jaygee.lessonschedule.util.generateMultiLineString
 /**
  *  create on 24/2/2023
  **/
-class DefaultBorderDrawer(
+open class DefaultBorderDrawer(
     var tvSize: Float,
     var color: Int,
     var marginX: Float,
     var marginY: Float
 ) : BorderDrawer {
 
-    private val mPaint: TextPaint by lazy {
+    protected val mPaint: TextPaint by lazy {
         TextPaint().apply {
             style = Paint.Style.FILL_AND_STROKE
             this.textSize = tvSize
@@ -27,6 +27,8 @@ class DefaultBorderDrawer(
             this.color = color
             this.strokeWidth = 2f
             this.textAlign = Paint.Align.CENTER
+            this.strokeJoin = Paint.Join.ROUND
+            this.strokeCap = Paint.Cap.ROUND
         }
     }
 
@@ -47,14 +49,14 @@ class DefaultBorderDrawer(
 
     override fun lessonIndexMargin() = marginY + lineSize() * 2
 
-    val map = mapOf<Int, String>(
-        Pair(1, "周一"),
-        Pair(2, "周二"),
-        Pair(3, "周三"),
-        Pair(4, "周四"),
-        Pair(5, "周五"),
-        Pair(6, "周六"),
-        Pair(7, "周日")
+    open val map = mapOf<Int, String>(
+        Pair(1, "MON"),
+        Pair(2, "TUE"),
+        Pair(3, "WEN"),
+        Pair(4, "THR"),
+        Pair(5, "FRI"),
+        Pair(6, "SAT"),
+        Pair(7, "SUN")
     )
 
 

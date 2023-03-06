@@ -15,27 +15,27 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         val table = findViewById<LessonScheduleProView>(R.id.table)
-        table.configScheduleSize(7, 8).setLessonData(
+        table
+            .configDrawer(lessonDrawer = MyLessonDrawer(this) , breakLessonDrawer = MyBreakDrawer())
+            .configScheduleSize(5, 5)
+            .setLessonData(
                 listOf(
-                    InnerLesson(2, 1, "okkkkkkkkkosadasd1222zczsad132131"),
-                    InnerLesson(2, 2, "math-room123-J.Koan"),
+                    InnerLesson(2, 1, "okkk1"),
+                    InnerLesson(2, 3, "math-room123-J.Koan"),
                     InnerLesson(1, 1, "small"),
-                    InnerLesson(2, 2, "small2"),
-                    InnerLesson(2, 2, "math-room123-J.Koan"),
+                    InnerLesson(2, 2, "math-room321-J.Koan"),
                     InnerLesson(6, 2, "math-room123-J.Koan"),
                 )
             )
             .setSerialBreakLessonData(
                 listOf(
-                    InnerBreakLesson(1, "running", true, 0),
-                    Inner2BreakLesson(1, 2, "art-room331-kk", false, 0), //星期1，第2节之后
-                    Inner2BreakLesson(1, 2, "1-2-before_1", true, 5),//星期1，第2节之前 1
-                    Inner2BreakLesson(2, 2, "2-2-before_1", true, 5),//星期2，第2节之前 0
-                    Inner2BreakLesson(1, 2, "1-2-before_2", true, 2),//星期1，第2节之前 2
-                    Inner2BreakLesson(2, 2, "wait", false, 0),//星期2，第2节之后 0
-                    Inner2BreakLesson(1, 2, "math-room331-wasabee123213ccc", true, 1),//星期1，第2节之前 0
-                    Inner2BreakLesson(3, 2, "3-2-before_1", true, 5),//星期3，第2节之前 0
-
+                    InnerBreakLesson(1, "running", true, 1),
+                    InnerBreakLesson(1, "gymnastics", true, 3),
+                    Inner2BreakLesson(1, 2, "music", true, 1),//星期1，第2节之前 1
+                    Inner2BreakLesson(2, 2, "dance", true, 0),//星期2，第2节之前 0
+                    Inner2BreakLesson(2, 2, "dance2", true, 1),//星期2，第2节之前 0
+                    Inner2BreakLesson(3, 2, "painting", true, 3),//星期1，第2节之前 2
+                    Inner2BreakLesson(4, 2, "balls", true, 4),//星期3，第2节之前 0
                 )
             )
             .addClickListener(object : ScheduleClickListener {

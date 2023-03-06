@@ -9,12 +9,17 @@ import com.jaygee.lessonschedule.util.drawMultiLineText
 /**
  *  create on 24/2/2023
  **/
-class SerialBreakDrawer(val textSize: Float, val minHeight: Float) : BreakDrawer {
+open class SerialBreakDrawer(var tvSize : Float , val minHeight: Float) : BreakDrawer {
+
+    open val textColor: Int = Color.parseColor("#A29464")
+
+    open val bgColor: Int
+        get() = Color.parseColor("#F5F8F4")
 
     private val mPaint: TextPaint by lazy {
         TextPaint().apply {
             style = Paint.Style.FILL_AND_STROKE
-            this.textSize = 36f
+            this.textSize = tvSize
             this.isDither = true
             this.isAntiAlias = true
             this.strokeWidth = 1f
@@ -34,22 +39,30 @@ class SerialBreakDrawer(val textSize: Float, val minHeight: Float) : BreakDrawer
 
     override fun drawBreak(
         canvas: Canvas?,
-        cells : Map<Pair<Int, Boolean>, Map<Int , List<BreakLessonCell>>>
+        cells: Map<Pair<Int, Boolean>, Map<Int, List<BreakLessonCell>>>
     ) {
         for (value in cells.values) {
             for (vue in value.values) {
                 for (breakLessonCell in vue) {
-                    mPaint.color = Color.LTGRAY
-                    canvas?.drawPath(breakLessonCell.path , mPaint)
-                    mPaint.color = Color.BLACK
+                    drawBg(canvas,breakLessonCell.path,mPaint)
+                    mPaint.color = textColor
                     mPaint.drawMultiLineText(
-                        canvas, breakLessonCell.label,
-                        breakLessonCell.rectF, breakLessonCell.cellWidth, breakLessonCell.cellHeight, drawTextOffsetY, textMeasureHeight
+                        canvas,
+                        breakLessonCell.label,
+                        breakLessonCell.rectF,
+                        breakLessonCell.cellWidth,
+                        breakLessonCell.cellHeight,
+                        drawTextOffsetY,
+                        textMeasureHeight
                     )
                 }
             }
         }
     }
 
+    open fun drawBg(canvas: Canvas? , path : Path , paint: Paint){
+        mPaint.color = bgColor
+        canvas?.drawPath(path, mPaint)
+    }
 
 }

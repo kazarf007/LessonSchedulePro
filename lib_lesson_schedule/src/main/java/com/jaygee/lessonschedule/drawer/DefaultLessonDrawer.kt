@@ -3,6 +3,7 @@ package com.jaygee.lessonschedule.drawer
 import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Paint
+import android.graphics.Path
 import android.text.TextPaint
 import com.jaygee.lessonschedule.drawer.base.LessonDrawer
 import com.jaygee.lessonschedule.model.LessonCell
@@ -12,19 +13,18 @@ import com.jaygee.lessonschedule.util.drawMultiLineText
 /**
  *  create on 13/2/2023
  **/
-open class DefaultLessonDrawer() : LessonDrawer {
+open class DefaultLessonDrawer(var tvSize : Float) : LessonDrawer {
 
-    open var textColor: Int = Color.parseColor("#000000")
+    open val textColor: Int = Color.parseColor("#000000")
 
-    val bgColor: Int
+    open val bgColor: Int
         get() = Color.parseColor("#F0F2F7")
 
-    val emptyColor: Int
+    open val emptyColor: Int
         get() = Color.parseColor("#F0F2F7")
 
-    var tvSize : Float = 36f
 
-    val mPaint: TextPaint by lazy {
+    protected val mPaint: TextPaint by lazy {
         TextPaint().apply {
             style = Paint.Style.FILL_AND_STROKE
             this.textSize = tvSize
@@ -44,16 +44,23 @@ open class DefaultLessonDrawer() : LessonDrawer {
 
 
     override fun draw(canvas: Canvas?, cell: LessonCell, label : List<String?>) {
+        drawBg(canvas,cell,label,mPaint)
+        drawContent(canvas, cell, label)
+    }
+
+    open fun drawBg(canvas: Canvas? , cell : LessonCell , label : List<String?> , paint: Paint){
         mPaint.color = if (label.isEmpty() || label.none { !it.isNullOrEmpty() }) {
             emptyColor
         } else {
             bgColor
         }
         canvas?.drawPath(cell.path, mPaint)
+    }
+
+    open fun drawContent(canvas: Canvas? , cell : LessonCell , label : List<String?>  ){
         mPaint.color = textColor
         mPaint.drawMultiLineText(
             canvas, label, cell.rectF, cell.cellWidth , cell.cellHeight, drawTextOffsetY, textMeasureHeight
         )
     }
-
 }

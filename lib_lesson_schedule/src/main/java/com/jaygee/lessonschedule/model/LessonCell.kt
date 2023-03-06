@@ -12,7 +12,7 @@ open class LessonCell(var rectF: RectF) {
 
     init {
         path = Path().apply {
-            addRoundRect(rectF, 10f, 10f, Path.Direction.CCW)
+            addRoundRect(rectF, 20f, 20f, Path.Direction.CCW)
         }
     }
 
@@ -37,7 +37,7 @@ open class BreakLessonCell(var rectF: RectF) {
 
     init {
         path = Path().apply {
-            addRoundRect(rectF, 10f, 10f, Path.Direction.CCW)
+            addRoundRect(rectF, 20f, 20f, Path.Direction.CCW)
         }
     }
 

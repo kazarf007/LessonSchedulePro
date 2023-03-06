@@ -1,10 +1,7 @@
 package com.jaygee.lessonschedule
 
 import android.content.Context
-import android.graphics.Canvas
-import android.graphics.Color
-import android.graphics.Paint
-import android.graphics.RectF
+import android.graphics.*
 import android.util.AttributeSet
 import android.util.Log
 import android.view.MotionEvent
@@ -17,10 +14,7 @@ import com.jaygee.lessonschedule.drawer.base.BorderDrawer
 import com.jaygee.lessonschedule.drawer.base.BreakDrawer
 import com.jaygee.lessonschedule.drawer.base.LessonDrawer
 import com.jaygee.lessonschedule.model.*
-import com.jaygee.lessonschedule.util.ClickJudger
-import com.jaygee.lessonschedule.util.ScheduleClickListener
-import com.jaygee.lessonschedule.util.generateMultiLineString
-import com.jaygee.lessonschedule.util.sumOfFloat
+import com.jaygee.lessonschedule.util.*
 
 /**
  *  create on 13/2/2023
@@ -43,7 +37,7 @@ class LessonScheduleProView : View, View.OnTouchListener {
 
     //课间活动
     // key -> first 第?节课 / second 课前/课后
-    // value ->   key : 显示排序 ， value : 同一个排序下的课间
+    // value ->   key : 显示排序 ， value : 同一个排序下的课间数组
     private val serialBreakLessons =
         mutableMapOf<Pair<Int, Boolean>, Map<Int, List<BreakLesson>>>()
 
@@ -136,7 +130,6 @@ class LessonScheduleProView : View, View.OnTouchListener {
             lessonMaxNo = getInteger(R.styleable.LessonScheduleProView_lessonMaxNo, 8)
             dividerSize = getDimension(R.styleable.LessonScheduleProView_dividerSize, 0f)
             textPaddingSize = getDimension(R.styleable.LessonScheduleProView_textPaddingSize, 10f)
-            Log.e("var","textMaxDrawWidth -> ${textMaxDrawWidth} , ps -> $textPaddingSize")
         }.recycle()
         setOnTouchListener(this)
     }
@@ -154,9 +147,9 @@ class LessonScheduleProView : View, View.OnTouchListener {
     }
 
     fun configDrawer(
-        borderDrawer: BorderDrawer?,
-        lessonDrawer: LessonDrawer?,
-        breakLessonDrawer: BreakDrawer?
+        borderDrawer: BorderDrawer? = null,
+        lessonDrawer: LessonDrawer? = null,
+        breakLessonDrawer: BreakDrawer? = null
     ): LessonScheduleProView {
         if (borderDrawer != null) {
             this.borderDrawer = borderDrawer
@@ -186,9 +179,8 @@ class LessonScheduleProView : View, View.OnTouchListener {
         for (entry in data.filter { (if (it.weekNo() == NOT_MATTER_WEEK) true else it.weekNo() in 1..weekNo) && it.lessonIndex() in 1..lessonMaxNo }
             .groupBy(keySelector = { bl -> bl.lessonIndex() })) {
             entry.value.groupBy { bl -> bl.isBeforeLesson() }.forEach { entry2 ->
-
                 serialBreakLessons[Pair(entry.key, entry2.key)] =
-                    entry2.value.sortedBy { it.sort() }.groupBy { it.sort() }
+                    entry2.value.asSequence().sortedBy { it.sort() }.groupBy { it.sort() }
             }
         }
         return this
@@ -204,11 +196,13 @@ class LessonScheduleProView : View, View.OnTouchListener {
             )
         }
         if (!::drawer.isInitialized) {
-            drawer = DefaultLessonDrawer()
+            drawer = DefaultLessonDrawer(
+                tvSize = context.resources.getDimension(R.dimen.tv_size)
+            )
         }
         if (!::breakDrawer.isInitialized) {
             breakDrawer = SerialBreakDrawer(
-                textSize = context.resources.getDimension(R.dimen.tv_size),
+                tvSize = context.resources.getDimension(R.dimen.tv_size),
                 minHeight = context.resources.getDimension(R.dimen.dp30)
             )
         }
@@ -365,6 +359,7 @@ class LessonScheduleProView : View, View.OnTouchListener {
                     }
 
                     if (serialBreakLessons.containsKey(Pair(y, false))) {
+                        //课后
                         addBreakCell(Pair(y, false), blHeightList2) {
                             lessonStartAxisY[y]!! + dividerSize + cellHeight
                         }
@@ -513,6 +508,7 @@ class LessonScheduleProView : View, View.OnTouchListener {
 
     }
 
+
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
         super.onMeasure(widthMeasureSpec, heightMeasureSpec)
         setMeasuredDimension(measureWidth(widthMeasureSpec), measureHeight(heightMeasureSpec))
@@ -593,7 +589,7 @@ class LessonScheduleProView : View, View.OnTouchListener {
             }
             MotionEvent.ACTION_POINTER_UP -> {
                 if (event.pointerCount == 2) {
-                    actionMove()
+                    scrollControl(maxScrollWidth , maxScrollHeight)
                 }
             }
             MotionEvent.ACTION_MOVE -> {
@@ -604,7 +600,7 @@ class LessonScheduleProView : View, View.OnTouchListener {
                 ClickJudger.recordMove(oldX - event.getX(0), oldY - event.getY(0))
                 oldX = event.getX(0)
                 oldY = event.getY(0)
-                actionMove()
+                scrollControl(maxScrollWidth , maxScrollHeight)
             }
         }
         return true
@@ -612,92 +608,7 @@ class LessonScheduleProView : View, View.OnTouchListener {
 
     private var findClickPos = false
 
-    private fun actionMove() {
-        when {
-            //横纵都全部在里面
-            maxScrollWidth < 0 && maxScrollHeight < 0 -> {
-                scrollTo(0, 0)
-            }
-            //横向在页面里，可以纵向滚动
-            maxScrollWidth < 0 && maxScrollHeight >= 0 -> {
-                when {
-                    scrollY < 0 -> {
-                        scrollBy(-scrollX, -scrollY)
-                    }
-                    scrollY in 0 until maxScrollHeight -> {
-                        scrollBy(-scrollX, 0)
-                    }
-                    scrollY >= maxScrollHeight -> {
-                        scrollBy(
-                            -scrollX, maxScrollHeight - scrollY
-                        )
-                    }
-                }
-            }
-            //纵向在页面里，可以横向滚动
-            maxScrollWidth >= 0 && maxScrollHeight < 0 -> {
-                when {
-                    scrollX < 0 -> {
-                        scrollBy(-scrollX, -scrollY)
-                    }
-                    scrollX in 0 until maxScrollWidth -> {
-                        scrollBy(0, -scrollY)
-                    }
-                    scrollX >= maxScrollWidth -> {
-                        scrollBy(
-                            maxScrollWidth - scrollX, -scrollY
-                        )
-                    }
-                }
-            }
-            else -> {
-                //横纵都全部在外面
-                when {
-                    scrollX < 0 -> {
-                        when {
-                            scrollY < 0 -> {
-                                scrollTo(0, 0)
-                            }
-                            scrollY in 0 until maxScrollHeight -> {
-                                scrollBy(-scrollX, 0)
-                            }
-                            else -> {
-                                scrollBy(-scrollX, maxScrollHeight - scrollY)
-                            }
-                        }
-                    }
 
-                    scrollX in 0 until maxScrollWidth -> {
-                        when {
-                            scrollY < 0 -> {
-                                scrollBy(0, -scrollY)
-                            }
-                            scrollY in 0 until maxScrollHeight -> {
-                                scrollBy(0, 0)
-                            }
-                            else -> {
-                                scrollBy(0, maxScrollHeight - scrollY)
-                            }
-                        }
-                    }
-
-                    else -> {
-                        when {
-                            scrollY < 0 -> {
-                                scrollBy(maxScrollWidth - scrollX, -scrollY)
-                            }
-                            scrollY in 0 until maxScrollHeight -> {
-                                scrollBy(maxScrollWidth - scrollX, 0)
-                            }
-                            else -> {
-                                scrollTo(maxScrollWidth, maxScrollHeight)
-                            }
-                        }
-                    }
-                }
-            }
-        }
-    }
 
     // 10  20 15
     private fun getScaleCenter(event: MotionEvent): Pair<Float, Float> {
