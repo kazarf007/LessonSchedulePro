@@ -44,7 +44,7 @@ open class SerialBreakDrawer(var tvSize : Float , val minHeight: Float) : BreakD
         for (value in cells.values) {
             for (vue in value.values) {
                 for (breakLessonCell in vue) {
-                    drawBg(canvas,breakLessonCell.path,mPaint)
+                    drawBg(canvas,breakLessonCell.path,mPaint , breakLessonCell)
                     mPaint.color = textColor
                     mPaint.drawMultiLineText(
                         canvas,
@@ -60,7 +60,7 @@ open class SerialBreakDrawer(var tvSize : Float , val minHeight: Float) : BreakD
         }
     }
 
-    open fun drawBg(canvas: Canvas? , path : Path , paint: Paint){
+    open fun drawBg(canvas: Canvas? , path : Path , paint: Paint , cell : BreakLessonCell){
         mPaint.color = bgColor
         canvas?.drawPath(path, mPaint)
     }

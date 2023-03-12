@@ -370,6 +370,8 @@ class LessonScheduleProView : View, View.OnTouchListener {
                 val cell = LessonCell(
                     RectF(l, lessonStartAxisY[y]!!, r, (lessonStartAxisY[y]!! + cellHeight))
                 )
+                cell.label.clear()
+                cell.label.addAll(texts[Pair(x,y)] ?: listOf())
                 cells[Pair(x, y)] = cell
             }
         }

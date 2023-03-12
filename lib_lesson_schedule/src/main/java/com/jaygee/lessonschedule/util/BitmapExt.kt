@@ -10,7 +10,6 @@ import kotlin.math.abs
 
 fun generateRoundBitmap(bmp: Bitmap, width: Float, height: Float, rx: Float, ry: Float): Bitmap {
     val origin = generateFitBitmap(bmp, width, height)
-    Log.e("var","before : w ->${bmp.width} , h ->${bmp.height} ____ after : w ->${origin.width} , h ->${origin.height} ____ size : w ->${width} , h ->${height}")
     val bitmap = Bitmap.createBitmap(origin.width, origin.height, Bitmap.Config.ARGB_8888)
     val canvas = Canvas(bitmap)
     val paint = Paint().apply {
@@ -44,18 +43,31 @@ fun generateFitBitmap(bmp: Bitmap, width: Float, height: Float): Bitmap {
 
 fun scaleBitmap(bmp: Bitmap, width: Float, height: Float): Bitmap {
     //原始宽高比
-    val ratio = bmp.width / bmp.height
+    val ratio = 1f * bmp.width / bmp.height
     //目标宽高比
-    val ratio2 = width / height
+    val ratio2 =  1f * width / height
     var newWidth = 0f
     var newHeight = 0f
     when{
         ratio >= 1 && ratio2 < 1 -> {
             //横图 -> 竖图
-
+            if (bmp.height <= height){
+                newWidth = height * ratio
+                newHeight = height
+            }else{
+                newWidth = bmp.width.toFloat()
+                newHeight = bmp.height.toFloat()
+            }
         }
         ratio < 1 && ratio2 >= 1 -> {
             //竖图 -> 横图
+            if (bmp.width <= width){
+                newWidth = width
+                newHeight = width / ratio
+            }else{
+                newWidth = bmp.width.toFloat()
+                newHeight = bmp.height.toFloat()
+            }
         }
         else -> {
             //同类型切换

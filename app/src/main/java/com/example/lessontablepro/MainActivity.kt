@@ -16,15 +16,16 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
         val table = findViewById<LessonScheduleProView>(R.id.table)
         table
-            .configDrawer(lessonDrawer = MyLessonDrawer(this) , breakLessonDrawer = MyBreakDrawer())
+            .configDrawer(lessonDrawer = MyLessonDrawer(this) ,
+                breakLessonDrawer = MyBreakDrawer(this))
             .configScheduleSize(5, 5)
             .setLessonData(
                 listOf(
                     InnerLesson(2, 1, "okkk1"),
                     InnerLesson(2, 3, "math-room123-J.Koan"),
                     InnerLesson(1, 1, "small"),
-                    InnerLesson(2, 2, "math-room321-J.Koan"),
-                    InnerLesson(6, 2, "math-room123-J.Koan"),
+                    InnerLesson(2, 2, "sport-room321-J.Koan"),
+                    InnerLesson(6, 2, "sport-room123-J.Koan"),
                 )
             )
             .setSerialBreakLessonData(
