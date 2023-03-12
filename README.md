@@ -1,11 +1,11 @@
 # LessonSchedulePro
 
 
-1.支持缩放查看
+1.支持缩放查看（scale gesture）
 
-2.支持横纵双向同时拖动查看
+2.支持横纵双向同时拖动查看 (drag both horizontal and vertical)
 
-3.支持 星期/周 头 不受拖动影响固定显示
+3.支持 星期/周 头 不受拖动影响固定显示（fix head）
 
 4.支持“周课间”配置：
 
@@ -50,7 +50,7 @@
 usage:
 
       添加依赖
-      implementation 'io.github.kazarf007:lessonschedual:1.0.1'
+      implementation 'io.github.kazarf007:lessonschedual:1.0.2'
 
 demo:
 
@@ -77,7 +77,17 @@ demo:
            .setSerialBreakLessonData(listOf(InnerBreakLesson(1 , "running" , true , 1)))
            .build()
         
+# Tips:
 
+you can custom your own style by override drawXXX method like this:
+![image](https://user-images.githubusercontent.com/23413753/224552514-f7b52ba1-bc8d-43db-9efa-eb80f036865e.png)
+
+so you can got something like this:
+
+![屏幕截图 2023-03-12 225642](https://user-images.githubusercontent.com/23413753/224552868-660979e5-ff0e-4682-8c13-2b5c86d26de1.png)
+
+
+# show:
 
 https://user-images.githubusercontent.com/23413753/222059039-17ab924a-b330-4172-aaeb-651d065609a0.mp4
 
