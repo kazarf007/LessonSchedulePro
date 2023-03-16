@@ -137,6 +137,7 @@ class LessonScheduleProView : View, View.OnTouchListener {
             textPaddingSize = getDimension(R.styleable.LessonScheduleProView_textPaddingSize, 10f)
         }.recycle()
         setOnTouchListener(this)
+        initDrawerIfNotExist()
     }
 
     fun addClickListener(l: ScheduleClickListener?): LessonScheduleProView {
@@ -192,6 +193,11 @@ class LessonScheduleProView : View, View.OnTouchListener {
     }
 
     fun build() {
+        resetPicture()
+        requestLayout()
+    }
+
+    private fun initDrawerIfNotExist(){
         if (!::borderDrawer.isInitialized) {
             borderDrawer = DefaultBorderDrawer(
                 tvSize = context.resources.getDimension(R.dimen.tv_size),
@@ -211,8 +217,6 @@ class LessonScheduleProView : View, View.OnTouchListener {
                 minHeight = context.resources.getDimension(R.dimen.dp30)
             )
         }
-        resetPicture()
-        requestLayout()
     }
 
     /**
