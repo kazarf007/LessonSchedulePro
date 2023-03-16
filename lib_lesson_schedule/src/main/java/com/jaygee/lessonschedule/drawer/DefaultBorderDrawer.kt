@@ -99,12 +99,22 @@ open class DefaultBorderDrawer(
         }
     }
 
-    private val mp = mapOf(Pair(1,"第1节09:00-09:45"),Pair(2,"第2节10:00-10:45"),Pair(3,"第3节10:15-11:00"),
+    open val lessonTipsMap = mapOf(Pair(1,"第1节09:00-09:45"),Pair(2,"第2节10:00-10:45"),Pair(3,"第3节10:15-11:00"),
         Pair(4,"第4节11:15-12:00"),Pair(5,"第5节14:00-14:45"),Pair(6,"第6节15:00-15:45"),
         Pair(7,"第7节16:15-17:00"),Pair(8,"第8节17:15-18:00"))
 
+    open val breakLessonTipsMap = mapOf(Pair(Triple(1,true ,1) , "课前1"),
+        Pair(Triple(1,true ,3) , "课前2"),
+        Pair(Triple(2,true ,1) , "课前4"),
+        Pair(Triple(2,true ,0) , "课前3"),
+        Pair(Triple(2,true ,3) , "课前5"),
+        Pair(Triple(2,true ,4) , "课前6"),)
+
     //缓存换行的文本
     private val indexWordMap = mutableMapOf<Int,List<String>>()
+
+    //缓存换行的文本2
+    private val indexWordMap2 = mutableMapOf<Triple<Int , Boolean , Int>,List<String>>()
 
     override fun drawIndex(
         canvas: Canvas?,
@@ -112,8 +122,10 @@ open class DefaultBorderDrawer(
         endY: Float,
         width: Float,
         cellHeight: Float,
+        breakCellHeight : Map<Triple<Int , Boolean , Int>, Float>,
         textPaddingSize : Float,
         axisY: Map<Int, Float>,
+        breakY : Map<Triple<Int , Boolean , Int>, Float>,
         scale: Float,
         scrollX: Int,
         scrollY: Int,
@@ -142,18 +154,35 @@ open class DefaultBorderDrawer(
             endY + scrollYRatio,
             mPaint
         )
-        for (entry in axisY) {
-            if (!indexWordMap.containsKey(entry.key)){
-                indexWordMap[entry.key] = mp[entry.key]!!.generateMultiLineString(mPaint , marginX - 10f)
+        if (lessonTipsMap.isNotEmpty()){
+            for (entry in axisY) {
+                if (!indexWordMap.containsKey(entry.key)){
+                    indexWordMap[entry.key] = lessonTipsMap[entry.key]!!.generateMultiLineString(mPaint , marginX - 10f)
+                }
+                mPaint.drawMultiLineText(
+                    canvas, indexWordMap[entry.key]!!,
+                    scrollXRatio,
+                    entry.value,
+                    marginX,
+                    cellHeight,
+                    drawTextOffsetY, textMeasureHeight
+                )
             }
-            mPaint.drawMultiLineText(
-                canvas, indexWordMap[entry.key]!!,
-                scrollXRatio,
-                entry.value,
-                marginX,
-                cellHeight,
-                drawTextOffsetY, textMeasureHeight
-            )
+        }
+        if (breakLessonTipsMap.isNotEmpty()){
+            for (entry in breakY) {
+                if (!indexWordMap2.containsKey(entry.key)){
+                    indexWordMap2[entry.key] = breakLessonTipsMap[entry.key]!!.generateMultiLineString(mPaint , marginX - 10f)
+                }
+                mPaint.drawMultiLineText(
+                    canvas, indexWordMap2[entry.key]!!,
+                    scrollXRatio,
+                    entry.value,
+                    marginX,
+                    breakCellHeight[entry.key]!!,
+                    drawTextOffsetY, textMeasureHeight
+                )
+            }
         }
     }
 

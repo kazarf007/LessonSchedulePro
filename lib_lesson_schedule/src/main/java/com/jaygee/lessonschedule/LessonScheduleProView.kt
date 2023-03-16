@@ -32,6 +32,9 @@ class LessonScheduleProView : View, View.OnTouchListener {
     //课程坐标记录 key -> 第?节 value -> y起点坐标
     private val lessonStartAxisY = mutableMapOf<Int, Float>()
 
+    //课间坐标记录 key -> < 第?节 | 课前 or 课后 | sort >   value -> y起点坐标
+    private val breakLessonStartAxisY = mutableMapOf<Triple<Int , Boolean , Int>, Float>()
+
     //格子 key -> x,y星期节数坐标 ， value -> 课程
     private val cells = mutableMapOf<Pair<Int, Int>, LessonCell>()
 
@@ -50,6 +53,8 @@ class LessonScheduleProView : View, View.OnTouchListener {
     //课后课间的高度记录 key -> 第?节 & 课前/课后  value -> 每一行的高度
     private val blHeightList2 = mutableMapOf<Pair<Int, Boolean>, List<Float>>()
 
+    //课间高度记录 key -> < 第?节 | 课前 or 课后 | sort >   value -> 高度
+    private val breakLessonHeightRecord = mutableMapOf<Triple<Int , Boolean , Int>, Float>()
 
     //星期 start form 1
     private var weekNo = 5
@@ -389,6 +394,9 @@ class LessonScheduleProView : View, View.OnTouchListener {
 
     /**
      * 添加课间
+     * @param key first : 第?节课 ， second : 课前or课后
+     * @param blHeight <pair<第?节课 ，课前or课后> , 每一行课间的高度数组>
+     * @param calculateTop 计算课间最开始的高度
      */
     private fun addBreakCell(
         key: Pair<Int, Boolean>,
@@ -402,35 +410,44 @@ class LessonScheduleProView : View, View.OnTouchListener {
         var indexHeight = 0f
         sbl.keys.forEachIndexed { index, sortKey ->
             indexHeight = blHeight[key]!![index]
-
             if (sbl[sortKey]!!.any { it.weekNo() != NOT_MATTER_WEEK }) {
                 sbl[sortKey]!!.forEach { bkl ->
-                    li.add(
-                        generateBreakLessonCell(
-                            weekNo = bkl.weekNo(), lessonIndexNo = key.first, sort = sortKey,
-                            label = bkl.label(),
-                            rectF = RectF(
-                                borderDrawer.xBorderSize() + borderDrawer.lineSize() + dividerSize + (cellWidth + dividerSize) * (bkl.weekNo() - 1),
-                                ttop,
-                                borderDrawer.xBorderSize() + borderDrawer.lineSize() + dividerSize + (cellWidth + dividerSize) * (bkl.weekNo() - 1) + cellWidth,
-                                ttop + indexHeight
-                            )
-                        )
-                    )
-                }
-            } else {
-                li.add(
-                    generateBreakLessonCell(
-                        weekNo = NOT_MATTER_WEEK, lessonIndexNo = key.first, sort = sortKey,
-                        label = sbl[sortKey]?.first()?.label() ?: "",
+                    val cell = generateBreakLessonCell(
+                        weekNo = bkl.weekNo(), lessonIndexNo = key.first, sort = sortKey,
+                        label = bkl.label(),
                         rectF = RectF(
-                            borderDrawer.xBorderSize() + borderDrawer.lineSize() + dividerSize,
+                            borderDrawer.xBorderSize() + borderDrawer.lineSize() + dividerSize + (cellWidth + dividerSize) * (bkl.weekNo() - 1),
                             ttop,
-                            exactlyWidth - dividerSize,
+                            borderDrawer.xBorderSize() + borderDrawer.lineSize() + dividerSize + (cellWidth + dividerSize) * (bkl.weekNo() - 1) + cellWidth,
                             ttop + indexHeight
                         )
                     )
+                    li.add(cell)
+                    if (!breakLessonStartAxisY.containsKey(Triple(key.first , key.second , sortKey))){
+                        breakLessonStartAxisY[Triple(key.first , key.second , sortKey)] = cell.rectF.top
+                    }
+                    if (!breakLessonHeightRecord.containsKey(Triple(key.first , key.second , sortKey))){
+                        breakLessonHeightRecord[Triple(key.first , key.second , sortKey)] = cell.cellHeight
+                    }
+                }
+            } else {
+                val cell = generateBreakLessonCell(
+                    weekNo = NOT_MATTER_WEEK, lessonIndexNo = key.first, sort = sortKey,
+                    label = sbl[sortKey]?.first()?.label() ?: "",
+                    rectF = RectF(
+                        borderDrawer.xBorderSize() + borderDrawer.lineSize() + dividerSize,
+                        ttop,
+                        exactlyWidth - dividerSize,
+                        ttop + indexHeight
+                    )
                 )
+                li.add(cell)
+                if (!breakLessonStartAxisY.containsKey(Triple(key.first , key.second , sortKey))){
+                    breakLessonStartAxisY[Triple(key.first , key.second , sortKey)] = cell.rectF.top
+                }
+                if (!breakLessonHeightRecord.containsKey(Triple(key.first , key.second , sortKey))){
+                    breakLessonHeightRecord[Triple(key.first , key.second , sortKey)] = cell.cellHeight
+                }
             }
             ttop += (indexHeight + dividerSize)
             map[sortKey] = li
@@ -496,8 +513,10 @@ class LessonScheduleProView : View, View.OnTouchListener {
             exactlyHeight.toFloat(),
             exactlyWidth.toFloat(),
             cellHeight.toFloat(),
+            breakLessonHeightRecord,
             textPaddingSize,
             lessonStartAxisY,
+            breakLessonStartAxisY,
             mScaleFactor,
             scrollX,
             scrollY

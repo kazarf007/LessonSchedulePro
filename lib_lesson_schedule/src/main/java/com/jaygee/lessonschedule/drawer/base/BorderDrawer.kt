@@ -41,6 +41,15 @@ interface BorderDrawer : TableDrawer {
      * 绘制y轴及相关
      * @param startY 起点y
      * @param endY 终点y
+     * @param width y轴宽度
+     * @param cellHeight 正课的高度
+     * @param breakCellHeight 课间的高度
+     * @param textPaddingSize 文字的左右间距
+     * @param axisY 正课文字的y坐标
+     * @param breakY 课间文字的y坐标
+     * @param scale 缩放
+     * @param scrollX 滑动因子
+     * @param scrollY 滑动因子
      */
     fun drawIndex(
         canvas: Canvas?,
@@ -48,8 +57,10 @@ interface BorderDrawer : TableDrawer {
         endY: Float,
         width: Float,
         cellHeight: Float,
+        breakCellHeight : Map<Triple<Int , Boolean , Int>, Float>,
         textPaddingSize : Float,
         axisY: Map<Int, Float>,
+        breakY : Map<Triple<Int , Boolean , Int>, Float>,
         scale: Float,
         scrollX: Int,
         scrollY: Int
