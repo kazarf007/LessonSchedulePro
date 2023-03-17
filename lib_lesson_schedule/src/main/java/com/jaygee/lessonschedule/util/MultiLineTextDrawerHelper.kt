@@ -1,10 +1,8 @@
 package com.jaygee.lessonschedule.util
 
 import android.graphics.Canvas
-import android.graphics.Color
 import android.graphics.Paint
 import android.graphics.RectF
-import android.util.Log
 
 /**
  *  create on 27/2/2023
@@ -33,11 +31,12 @@ fun Paint.drawMultiLineText(
             )
         } else {
             _drawStartY = (maxHeight - word.size * textMeasureHeight) / 2
+            val off = drawTextOffsetY * (word.size - 1)
             word.forEachIndexed { index, s ->
                 canvas?.drawText(
                     s ?: "",
                     startX + maxWidth / 2,
-                    startY + _drawStartY + drawTextOffsetY * 2 + index * textMeasureHeight,
+                    startY + _drawStartY + off + index * textMeasureHeight,
                     this
                 )
             }
@@ -70,22 +69,29 @@ private val _sb = StringBuilder()
 fun String.generateMultiLineString(paint: Paint, maxWidth: Float): List<String> {
     _sb.setLength(0)
     _drawLength = 0f
-    return if (paint.measureText(this) > maxWidth) {
-        this.forEach {
-            if (_drawLength + paint.measureText(it.toString()) >= maxWidth) {
-                _sb.append("\n")
-                _sb.append(it)
-                _drawLength = 0f
-            }else{
-                _sb.append(it)
+    val list = mutableListOf<String>()
+    val firstSplit = this.split("\n").filter { it.isNotEmpty() }
+    firstSplit.forEachIndexed { index, s ->
+        if (paint.measureText(s) > maxWidth) {
+            s.forEach { char ->
+                if (_drawLength + paint.measureText(char.toString()) >= maxWidth) {
+                    _sb.append("\n")
+                    _sb.append(char)
+                    _drawLength = 0f
+                } else {
+                    _sb.append(char)
+                }
+                _drawLength += paint.measureText(char.toString())
             }
-            _drawLength += paint.measureText(it.toString())
-            if (!this.contains("节")){
-                Log.e("var","char -> $it _drawLength -> $_drawLength maxWidth -> $maxWidth")
-            }
+            list.addAll(_sb.toString().split("\n").filter { it.isNotEmpty() })
+        } else {
+            list.add(s)
         }
-        _sb.toString().split("\n").filter { it.isNotEmpty() }
-    } else {
-        listOf(this)
+        if (index != firstSplit.lastIndex) {
+            _sb.setLength(0)
+            _drawLength = 0f
+        }
     }
+
+    return list
 }

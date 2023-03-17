@@ -6,5 +6,6 @@
         <attr name="lessonMaxNo" format="integer"/>
         <attr name="dividerSize" format="dimension"/>
         <attr name="textPaddingSize" format="dimension"/>
+        <attr name="bgColor" format="color"/>
     </declare-styleable>
 </resources>

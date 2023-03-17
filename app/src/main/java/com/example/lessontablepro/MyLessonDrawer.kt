@@ -2,9 +2,8 @@ package com.example.lessontablepro
 
 import android.content.Context
 import android.graphics.*
-import android.util.Log
 import com.jaygee.lessonschedule.drawer.DefaultLessonDrawer
-import com.jaygee.lessonschedule.drawer.SerialBreakDrawer
+import com.jaygee.lessonschedule.drawer.DefaultBreakDrawer
 import com.jaygee.lessonschedule.model.BreakLessonCell
 import com.jaygee.lessonschedule.model.LessonCell
 import com.jaygee.lessonschedule.util.generateRoundBitmap
@@ -55,7 +54,7 @@ class MyLessonDrawer(val context: Context) : DefaultLessonDrawer(54f) {
 }
 
 
-class MyBreakDrawer(var context: Context) : SerialBreakDrawer(54f ,10f){
+class MyBreakDrawer(var context: Context) : DefaultBreakDrawer(54f ,10f){
 
     override val textColor: Int
         get() = Color.parseColor("#A29464")

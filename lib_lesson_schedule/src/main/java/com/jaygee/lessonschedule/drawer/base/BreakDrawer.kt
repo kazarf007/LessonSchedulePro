@@ -10,7 +10,7 @@ import com.jaygee.lessonschedule.model.BreakLessonCell
 interface BreakDrawer : TableDrawer {
 
     /**
-     * @param bl key 第几节课 value : 课间数组 最大size = 2 ，课前 ，课后
+     * @param cells key <第？节课 ， 课前/课后> /  value < sort , 相同sort的课程 >
      */
     fun drawBreak(
         canvas: Canvas?,

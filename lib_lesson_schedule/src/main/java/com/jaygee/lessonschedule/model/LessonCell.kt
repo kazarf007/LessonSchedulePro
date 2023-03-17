@@ -8,6 +8,16 @@ import android.graphics.RectF
  **/
 open class LessonCell(var rectF: RectF) {
 
+    val cellWidth : Float
+        get() = rectF.right - rectF.left
+
+    val cellHeight : Float
+        get() = rectF.bottom - rectF.top
+
+    val label = mutableListOf<String>()
+
+    var lesson : Lesson ?= null
+
     lateinit var path: Path
 
     init {
@@ -16,22 +26,22 @@ open class LessonCell(var rectF: RectF) {
         }
     }
 
-    val cellWidth : Float
-        get() = rectF.right - rectF.left
 
-    val cellHeight : Float
-        get() = rectF.bottom - rectF.top
-
-    val label = mutableListOf<String>()
 }
 
 open class BreakLessonCell(var rectF: RectF) {
 
-    var week = 1
-    var lessonIndex = 1
     var sort = 0
 
+    var lesson : BreakLesson ?= null
+
     val label = mutableListOf<String>()
+
+    val cellWidth : Float
+        get() = rectF.right - rectF.left
+
+    val cellHeight : Float
+        get() = rectF.bottom - rectF.top
 
     lateinit var path: Path
 
@@ -41,10 +51,6 @@ open class BreakLessonCell(var rectF: RectF) {
         }
     }
 
-    val cellWidth : Float
-        get() = rectF.right - rectF.left
 
-    val cellHeight : Float
-        get() = rectF.bottom - rectF.top
 
 }

@@ -1,7 +1,6 @@
 package com.jaygee.lessonschedule.drawer
 
 import android.graphics.Canvas
-import android.graphics.Color
 import android.graphics.Paint
 import android.text.TextPaint
 import com.jaygee.lessonschedule.drawer.base.BorderDrawer
@@ -13,9 +12,11 @@ import com.jaygee.lessonschedule.util.generateMultiLineString
  **/
 open class DefaultBorderDrawer(
     var tvSize: Float,
-    var color: Int,
     var marginX: Float,
-    var marginY: Float
+    var marginY: Float,
+    var tvColor: Int,
+    var lineColor : Int,
+    var bgColor: Int,
 ) : BorderDrawer {
 
     protected val mPaint: TextPaint by lazy {
@@ -49,14 +50,14 @@ open class DefaultBorderDrawer(
 
     override fun lessonIndexMargin() = marginY + lineSize() * 2
 
-    open val map = mapOf<Int, String>(
-        Pair(1, "MON"),
-        Pair(2, "TUE"),
-        Pair(3, "WEN"),
-        Pair(4, "THR"),
-        Pair(5, "FRI"),
-        Pair(6, "SAT"),
-        Pair(7, "SUN")
+    protected open val map = mapOf<Int, String>(
+        Pair(1, "周一"),
+        Pair(2, "周二"),
+        Pair(3, "周三"),
+        Pair(4, "周四"),
+        Pair(5, "周五"),
+        Pair(6, "周六"),
+        Pair(7, "周日")
     )
 
 
@@ -74,13 +75,13 @@ open class DefaultBorderDrawer(
         val scrollXRatio = scrollX / scale
         val scrollYRatio = scrollY / scale
 
-        mPaint.color = Color.WHITE
+        mPaint.color = bgColor
         canvas?.drawRect(
             scrollXRatio, scrollYRatio,
             endX + scrollXRatio, marginY + scrollYRatio, mPaint
         )
 
-        mPaint.color = color
+        mPaint.color = lineColor
         canvas?.drawLine(
             startX + scrollXRatio, marginY + scrollYRatio,
             endX + scrollXRatio, marginY + scrollYRatio, mPaint
@@ -90,7 +91,7 @@ open class DefaultBorderDrawer(
             startX + scrollXRatio, height + scrollYRatio,
             endX + scrollXRatio, height + scrollYRatio, mPaint
         )
-
+        mPaint.color = tvColor
         for (entry in axisX) {
             canvas?.drawText(
                 map[entry.key ]!!, entry.value + cellWidth / 2,
@@ -99,11 +100,11 @@ open class DefaultBorderDrawer(
         }
     }
 
-    open val lessonTipsMap = mapOf(Pair(1,"第1节09:00-09:45"),Pair(2,"第2节10:00-10:45"),Pair(3,"第3节10:15-11:00"),
+    protected open val lessonTipsMap = mapOf(Pair(1,"第1节09:00-09:45"),Pair(2,"第2节10:00-10:45"),Pair(3,"第3节10:15-11:00"),
         Pair(4,"第4节11:15-12:00"),Pair(5,"第5节14:00-14:45"),Pair(6,"第6节15:00-15:45"),
         Pair(7,"第7节16:15-17:00"),Pair(8,"第8节17:15-18:00"))
 
-    open val breakLessonTipsMap = mapOf(Pair(Triple(1,true ,1) , "课前1"),
+    protected open val breakLessonTipsMap = mapOf(Pair(Triple(1,true ,1) , "课前1"),
         Pair(Triple(1,true ,3) , "课前2"),
         Pair(Triple(2,true ,1) , "课前4"),
         Pair(Triple(2,true ,0) , "课前3"),
@@ -133,13 +134,13 @@ open class DefaultBorderDrawer(
         val scrollXRatio = scrollX / scale
         val scrollYRatio = scrollY / scale
 
-        mPaint.color = Color.WHITE
+        mPaint.color = bgColor
         canvas?.drawRect(
             scrollXRatio, scrollYRatio,
             marginX + scrollXRatio, endY + scrollYRatio, mPaint
         )
 
-        mPaint.color = color
+        mPaint.color = lineColor
         canvas?.drawLine(
             marginX + scrollXRatio,
             startY + scrollYRatio,
@@ -154,6 +155,7 @@ open class DefaultBorderDrawer(
             endY + scrollYRatio,
             mPaint
         )
+        mPaint.color = tvColor
         if (lessonTipsMap.isNotEmpty()){
             for (entry in axisY) {
                 if (!indexWordMap.containsKey(entry.key)){
@@ -171,6 +173,9 @@ open class DefaultBorderDrawer(
         }
         if (breakLessonTipsMap.isNotEmpty()){
             for (entry in breakY) {
+                if (!breakLessonTipsMap.containsKey(entry.key)){
+                    continue
+                }
                 if (!indexWordMap2.containsKey(entry.key)){
                     indexWordMap2[entry.key] = breakLessonTipsMap[entry.key]!!.generateMultiLineString(mPaint , marginX - 10f)
                 }
@@ -194,7 +199,7 @@ open class DefaultBorderDrawer(
         val scrollXRatio = scrollX / scale
         val scrollYRatio = scrollY / scale
 
-        mPaint.color = Color.WHITE
+        mPaint.color = bgColor
         canvas?.drawRect(
             scrollXRatio, scrollYRatio,
             marginX + scrollXRatio - 2f, marginY + scrollYRatio - 2f, mPaint

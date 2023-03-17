@@ -3,7 +3,6 @@ package com.jaygee.lessonschedule.drawer
 import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Paint
-import android.graphics.Path
 import android.text.TextPaint
 import com.jaygee.lessonschedule.drawer.base.LessonDrawer
 import com.jaygee.lessonschedule.model.LessonCell
@@ -13,7 +12,7 @@ import com.jaygee.lessonschedule.util.drawMultiLineText
 /**
  *  create on 13/2/2023
  **/
-open class DefaultLessonDrawer(var tvSize : Float) : LessonDrawer {
+open class DefaultLessonDrawer(var tvSize: Float) : LessonDrawer {
 
     open val textColor: Int = Color.parseColor("#000000")
 
@@ -43,12 +42,17 @@ open class DefaultLessonDrawer(var tvSize : Float) : LessonDrawer {
         get() = mPaint.fontMetrics.descent - mPaint.fontMetrics.ascent
 
 
-    override fun draw(canvas: Canvas?, cell: LessonCell, label : List<String?>) {
-        drawBg(canvas,cell,label,mPaint)
+    override fun draw(canvas: Canvas?, cell: LessonCell, label: List<String?>) {
+        drawBg(canvas, cell, label, mPaint)
         drawContent(canvas, cell, label)
     }
 
-    open fun drawBg(canvas: Canvas? , cell : LessonCell , label : List<String?> , paint: Paint){
+    open fun drawBg(
+        canvas: Canvas?,
+        cell: LessonCell,
+        label: List<String?>,
+        paint: Paint
+    ) {
         mPaint.color = if (label.isEmpty() || label.none { !it.isNullOrEmpty() }) {
             emptyColor
         } else {
@@ -57,10 +61,16 @@ open class DefaultLessonDrawer(var tvSize : Float) : LessonDrawer {
         canvas?.drawPath(cell.path, mPaint)
     }
 
-    open fun drawContent(canvas: Canvas? , cell : LessonCell , label : List<String?>  ){
+    open fun drawContent(canvas: Canvas?, cell: LessonCell, label: List<String?>) {
         mPaint.color = textColor
         mPaint.drawMultiLineText(
-            canvas, label, cell.rectF, cell.cellWidth , cell.cellHeight, drawTextOffsetY, textMeasureHeight
+            canvas,
+            label,
+            cell.rectF,
+            cell.cellWidth,
+            cell.cellHeight,
+            drawTextOffsetY,
+            textMeasureHeight
         )
     }
 }
