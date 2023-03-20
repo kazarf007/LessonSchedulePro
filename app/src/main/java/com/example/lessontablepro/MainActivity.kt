@@ -34,9 +34,9 @@ class MainActivity : AppCompatActivity() {
                     InnerBreakLesson(1, "gymnastics", true, 3),
                     Inner2BreakLesson(1, 2, "music", true, 1),//星期1，第2节之前 1
                     Inner2BreakLesson(2, 2, "dance", true, 0),//星期2，第2节之前 0
-                    Inner2BreakLesson(2, 2, "dance222222222222222222", true, 1),//星期2，第2节之前 0
-                    Inner2BreakLesson(3, 2, "painting", true, 3),//星期1，第2节之前 2
-                    Inner2BreakLesson(4, 2, "balls", true, 4),//星期3，第2节之前 0
+                    Inner2BreakLesson(2, 2, "dance222222222222222222", true, 1),//星期2，第2节之前 1
+                    Inner2BreakLesson(3, 2, "painting", true, 3),//星期3，第2节之前 3
+                    Inner2BreakLesson(4, 2, "balls", true, 4),//星期4，第2节之前 4
                 )
             )
             .addClickListener(object : ScheduleClickListener {

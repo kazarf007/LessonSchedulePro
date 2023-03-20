@@ -434,10 +434,10 @@ class LessonScheduleProView : View, View.OnTouchListener {
     ) {
         val map = mutableMapOf<Int, MutableList<BreakLessonCell>>()
         var ttop = calculateTop(key)
-        val li = mutableListOf<BreakLessonCell>()
         val sbl = serialBreakLessons[key]!!
         var indexHeight = 0f
         sbl.keys.forEachIndexed { index, sortKey ->
+            val li = mutableListOf<BreakLessonCell>()
             indexHeight = blHeight[key]!![index]
             if (sbl[sortKey]!!.any { it.weekNo() != NOT_MATTER_WEEK }) {
                 if (showEmptyBreakLessonCell) {
@@ -492,6 +492,7 @@ class LessonScheduleProView : View, View.OnTouchListener {
                     breakLessonHeightRecord[Triple(key.first, key.second, sortKey)] =
                         cell.cellHeight
                 }
+
             }
             ttop += (indexHeight + dividerSize)
             map[sortKey] = li

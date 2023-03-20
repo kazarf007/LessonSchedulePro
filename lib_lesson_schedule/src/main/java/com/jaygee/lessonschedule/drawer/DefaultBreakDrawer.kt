@@ -42,20 +42,9 @@ open class DefaultBreakDrawer(var tvSize : Float, val minHeight: Float) : BreakD
         canvas: Canvas?,
         cells: Map<Pair<Int, Boolean>, Map<Int, List<BreakLessonCell>>>
     ) {
-        for (cell in cells) {
-//            Log.e("var","第${cell.key.first}节 ， 有 ${cell.value.size} 个")
-            for (entry in cell.value) {
-//                Log.e("var","第${cell.key.first}节 ， key ${entry.key} 有${entry.value.size}个")
-                for (breakLessonCell in entry.value) {
-                    Log.e("var","第${cell.key.first}节 ， key ${entry.key}  ， sort ${entry.key} , label ${breakLessonCell.lesson?.label()}")
-                }
-            }
-        }
-
         for (value in cells.values) {
             inner@ for (vue in value.values) {
                 for (breakLessonCell in vue) {
-//                    Log.e("var","draw + 1")
                     drawBg(canvas,breakLessonCell.path,mPaint, breakLessonCell)
                     if (breakLessonCell.label.isNotEmpty()){
                         drawContent(canvas ,breakLessonCell ,breakLessonCell.label)
