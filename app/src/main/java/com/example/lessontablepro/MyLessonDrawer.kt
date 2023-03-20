@@ -72,7 +72,7 @@ class MyBreakDrawer(var context: Context) : DefaultBreakDrawer(54f ,10f){
     override fun drawBg(canvas: Canvas?, path: Path, paint: Paint, cell: BreakLessonCell) {
         if (cell.label.contains("running")){
             if (!::imgSport.isInitialized){
-                imgSport = generateRoundBitmap(BitmapFactory.decodeResource(context.resources , R.mipmap.img_33) ,
+                imgSport = generateRoundBitmap(BitmapFactory.decodeResource(context.resources , R.mipmap.tets1) ,
                     cell.cellWidth , cell.cellHeight,20f, 20f)
             }
             canvas?.drawBitmap(imgSport, cell.rectF.left , cell.rectF.top, null)
