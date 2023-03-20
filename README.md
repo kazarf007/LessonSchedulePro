@@ -29,19 +29,15 @@
 
 
       <attr name="cellWidth" format="dimension"/> 
-
       <attr name="weekNo" format="integer"/>  
-
       <attr name="lessonMaxNo" format="integer"/>   
-
       <attr name="dividerSize" format="dimension"/> 
-
       <attr name="textPaddingSize" format="dimension"/>   
      
 # usage:
 
-      添加依赖
       implementation 'io.github.kazarf007:lessonschedual:1.0.3'
+
 
 demo:
 
