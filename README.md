@@ -22,8 +22,11 @@
 
 6.支持“周课间”“星期课间”混合配置（例如第一节课之前先是“周课间”统一晨跑，然后是“星期课间”按星期？不同科目的早读，然后又是“周课间”统一早餐时间）(support config no.4 and no.5 the same time )
 
-注：1.超长文字支持根据宽度自动换行显示。(Extra long text supports automatic line wrapping based on width)
-    2.支持\n手动换行。（support manual wrapping by \n ）
+注：
+
+1.超长文字支持根据宽度自动换行显示。(Extra long text supports automatic line wrapping based on width)
+    
+2.支持\n手动换行。（support manual wrapping by \n ）
     
 属性：
 
