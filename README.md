@@ -20,7 +20,7 @@
       3 支持“星期课间”叠加配置。(support overlay break lesson)
       4 支持按星期非全量配置：例如只配置星期一的第2节课后是升旗仪式。
 
-6.支持“周课间”“星期课间”混合配置（例如第一节课之前先是“周课间”统一晨跑，然后是“星期课间”按星期？不同科目的早读，然后又是“周课间”统一早餐时间）
+6.支持“周课间”“星期课间”混合配置（例如第一节课之前先是“周课间”统一晨跑，然后是“星期课间”按星期？不同科目的早读，然后又是“周课间”统一早餐时间）(support config no.4 and no.5 the same time )
 
 注：1.超长文字支持根据宽度自动换行显示。(Extra long text supports automatic line wrapping based on width)
     2.支持\n手动换行。（support manual wrapping by \n ）
